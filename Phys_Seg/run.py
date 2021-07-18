@@ -28,6 +28,7 @@ def run_phys_seg(mri_fnames, output_fnames, sequence='MPRAGE', physics_params=No
     :param sequence: MPRAGE or SPGR (for now)
     :param config_file: config.py
     :param device: either int (for device id) or 'cpu'
+    :param overwrite: True or False
     :param postprocess: whether to do postprocessing or not. Postprocessing here consists of simply discarding all
     but the largest predicted connected component. Default False
     :return:

@@ -43,7 +43,7 @@ def load_and_preprocess(mri_file):
     }
 
     for k in images.keys():
-        images[k] = preprocess_image(images[k], is_seg=False, spacing_target=(1.5, 1.5, 1.5))
+        images[k] = preprocess_image(images[k], is_seg=False, spacing_target=(1, 1, 1))
 
     properties_dict['size_before_cropping'] = images["T1"].shape
 
