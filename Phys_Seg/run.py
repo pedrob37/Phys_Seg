@@ -49,6 +49,8 @@ def run_phys_seg(mri_fnames, output_fnames, sequence='MPRAGE', physics_params=No
     else:
         net.cuda(device)
 
+    net = torch.nn.DataParallel(net)
+
     if not isinstance(mri_fnames, (list, tuple)):
         mri_fnames = [mri_fnames]
 
