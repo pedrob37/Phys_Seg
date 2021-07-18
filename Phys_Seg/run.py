@@ -76,7 +76,7 @@ def run_phys_seg(mri_fnames, output_fnames, sequence='MPRAGE', physics_params=No
             data = image_preprocessing(patient_data=data)
 
             print("prediction (CNN id)...")
-            net.load_state_dict(params)
+            net.load_state_dict(params['model_state_dict'])
             net.eval()
             seg = predict_phys_seg(net=net,
                                    patient_data=data,
