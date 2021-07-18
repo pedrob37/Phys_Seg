@@ -15,7 +15,7 @@ def get_params_fname(sequence, physics_flag):
     return os.path.join(folder_with_parameter_files, model_name)
 
 
-def maybe_download_parameters(sequence='mprage', physics_flag=True, force_overwrite=True):
+def maybe_download_parameters(sequence='MPRAGE', physics_flag=True, force_overwrite=True):
     """
     Downloads the parameters for some sequence and physics type.
     :param sequence: MPRAGE or SPGR
@@ -34,9 +34,9 @@ def maybe_download_parameters(sequence='mprage', physics_flag=True, force_overwr
 
     if not os.path.isfile(out_filename):
         if physics_flag:
-            url = f"https://zenodo.org/record/5111795/files/{sequence}_phys_NSS.pth?download=1"
+            url = f"https://zenodo.org/record/5111795/files/{sequence.lower()}_phys_NSS.pth?download=1"
         else:
-            url = f"https://zenodo.org/record/5111795/files/{sequence}_base_NSS.pth?download=1"
+            url = f"https://zenodo.org/record/5111795/files/{sequence.lower()}_base_NSS.pth?download=1"
         print("Downloading", url, "...")
         data = urlopen(url).read()
         with open(out_filename, 'wb') as f:
