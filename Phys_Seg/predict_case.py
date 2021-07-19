@@ -57,7 +57,7 @@ def physics_preprocessing(physics_input, experiment_type):
         TE_expo_params = torch.unsqueeze(torch.exp(-physics_input[:, 1]), dim=1)
         FA_sin_params = torch.unsqueeze(torch.sin(physics_input[:, 2] * 3.14159265 / 180), dim=1)
         overall_physics = torch.cat((physics_input, torch.stack((TR_expo_params, TE_expo_params, FA_sin_params), dim=1).squeeze()), dim=1)
-    return overall_physics
+    return overall_physics.float()
 
 
 def predict_phys_seg(net, patient_data, processed_physics, main_device=0):
