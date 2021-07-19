@@ -41,7 +41,7 @@ def image_preprocessing(patient_data):
 
 
 def physics_preprocessing(physics_input, experiment_type):
-    physics_input = physics_input[None, :]
+    physics_input = torch.from_numpy(physics_input[None, :])
     if experiment_type == 'MPRAGE':
         TI_physics = physics_input[:, 0]
         # print(physics_input.shape)
@@ -70,7 +70,7 @@ def predict_phys_seg(net, patient_data, processed_physics, main_device=0):
             patient_data = torch.from_numpy(patient_data).cuda(main_device)
         # Basic to begin with: Just run with net!
         if processed_physics is not None:
-            out, _ = net(patient_data, torch.from_numpy(processed_physics).cuda(main_device))
+            out, _ = net(patient_data, processed_physics.cuda(main_device))
         else:
             out, _ = net(patient_data)
         pred_seg = torch.softmax(out, dim=1)
