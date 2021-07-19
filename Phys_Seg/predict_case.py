@@ -41,7 +41,11 @@ def image_preprocessing(patient_data):
     if len(patient_data.shape) < 5:
         shape_mismatch = 5 - len(patient_data.shape)
         patient_data = patient_data[(*([None] * shape_mismatch), ...)]
-    return (patient_data - np.mean(patient_data)) / np.std(patient_data)
+    # patient_data = patient_data.clone()
+    p_mean, p_std = patient_data.mean(), patient_data.std()
+    patient_data = patient_data - p_mean
+    patient_data = patient_data / p_std
+    return patient_data
 
 
 def physics_preprocessing(physics_input, experiment_type):
@@ -239,6 +243,9 @@ def predict_phys_seg(net, patient_data, processed_physics, main_device):
                 (patient_data, processed_physics.cuda(main_device)), 160, 1, net, overlap=0.3, mode='gaussian')
         else:
             out = custom_sliding_window_inference(patient_data, 160, 1, net, overlap=0.3, mode='gaussian')
+        # Softmax
         pred_seg = torch.softmax(out, dim=1)
-    return pred_seg.cpu().numpy()
+        # Permute and cast to numpy
+        pred_seg = pred_seg.squeeze().permute(1, 2, 3, 0).cpu().numpy()
+    return pred_seg
 

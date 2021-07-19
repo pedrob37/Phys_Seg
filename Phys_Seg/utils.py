@@ -34,9 +34,11 @@ def maybe_download_parameters(sequence='MPRAGE', physics_flag=True, force_overwr
 
     if not os.path.isfile(out_filename):
         if physics_flag:
-            url = f"https://zenodo.org/record/5111795/files/{sequence.lower()}_phys_NSS.pth?download=1"
+            url = f"https://zenodo.org/record/5116836/files/{sequence.lower()}_phys_NSS.pth?download=1"
+            # url = f"https://zenodo.org/record/5111795/files/{sequence.lower()}_phys_NSS.pth?download=1"
         else:
             url = f"https://zenodo.org/record/5111795/files/{sequence.lower()}_base_NSS.pth?download=1"
+            # url = f"https://zenodo.org/record/5111795/files/{sequence.lower()}_base_NSS.pth?download=1"
         print("Downloading", url, "...")
         data = urlopen(url).read()
         with open(out_filename, 'wb') as f:

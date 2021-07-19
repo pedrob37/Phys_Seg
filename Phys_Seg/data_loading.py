@@ -1,6 +1,19 @@
 import SimpleITK as sitk
 import numpy as np
 from skimage.transform import resize
+import nibabel as nib
+
+
+def read_file(filename):
+    img = nib.load(filename)
+    data = img.get_data()
+    aff = img.affine
+    return data, aff
+
+
+def save_img(image, affine, filename):
+    nifti_img = nib.Nifti1Image(image, affine)
+    nib.save(nifti_img, filename)
 
 
 def resize_image(image, old_spacing, new_spacing, order=3):
@@ -35,27 +48,27 @@ def load_and_preprocess(mri_file):
     # t1
     images["T1"] = sitk.ReadImage(mri_file)
 
-    properties_dict = {
-        "spacing": images["T1"].GetSpacing(),
-        "direction": images["T1"].GetDirection(),
-        "size": images["T1"].GetSize(),
-        "origin": images["T1"].GetOrigin()
-    }
+    # properties_dict = {
+    #     "spacing": images["T1"].GetSpacing(),
+    #     "direction": images["T1"].GetDirection(),
+    #     "size": images["T1"].GetSize(),
+    #     "origin": images["T1"].GetOrigin()
+    # }
 
-    for k in images.keys():
-        images[k] = preprocess_image(images[k], is_seg=False, spacing_target=(1, 1, 1))
+    # for k in images.keys():
+    #     images[k] = preprocess_image(images[k], is_seg=False, spacing_target=(1, 1, 1))
 
-    properties_dict['size_before_cropping'] = images["T1"].shape
+    # properties_dict['size_before_cropping'] = images["T1"].shape
 
     imgs = []
     for seq in ['T1']:
         imgs.append(images[seq][None])
     all_data = np.vstack(imgs)
     print("image shape after preprocessing: ", str(all_data[0].shape))
-    return all_data, properties_dict
+    return all_data  #, properties_dict
 
 
-def save_segmentation_nifti(segmentation, dct, out_fname, order=1):
+def save_segmentation_nifti(segmentation, aff, out_fname):
     '''
     segmentation must have the same spacing as the original nifti (for now). segmentation may have been cropped out
     of the original image
@@ -88,12 +101,13 @@ def save_segmentation_nifti(segmentation, dct, out_fname, order=1):
     #     seg_old_spacing = resize_segmentation(seg_old_size, np.array(dct['size'])[[2, 1, 0]], order=order)
     # else:
     #     seg_old_spacing = seg_old_size
-    seg_resized_itk = sitk.GetImageFromArray(segmentation.astype(np.float32))
+    # seg_resized_itk = sitk.GetImageFromArray(segmentation.astype(np.float32))
     # seg_resized_itk.SetSpacing(np.array(dct['spacing'])[[0, 1, 2]])
     # seg_resized_itk.SetOrigin(dct['origin'])
     # seg_resized_itk.SetDirection(dct['direction'])
     print(f'Saving segmentation under {out_fname}')
-    sitk.WriteImage(seg_resized_itk, out_fname)
+    save_img(segmentation, None, out_fname)
+    # sitk.WriteImage(seg_resized_itk, out_fname)
 
 
 def resize_segmentation(segmentation, new_shape, order=3, cval=0):

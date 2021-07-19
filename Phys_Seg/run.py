@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 import SimpleITK as sitk
-from Phys_Seg.data_loading import load_and_preprocess, save_segmentation_nifti
+from Phys_Seg.data_loading import load_and_preprocess, save_segmentation_nifti, read_file, save_img
 from Phys_Seg.predict_case import predict_phys_seg, physics_preprocessing, image_preprocessing
 import importlib
 from Phys_Seg.utils import postprocess_prediction, get_params_fname, maybe_download_parameters
@@ -67,7 +67,7 @@ def run_phys_seg(mri_fnames, output_fnames, sequence='MPRAGE', physics_params=No
             print("File:", in_fname)
             print("preprocessing...")
             try:
-                data, data_dict = load_and_preprocess(in_fname)
+                data, aff = read_file(in_fname)
             except RuntimeError:
                 print("\nERROR\nCould not read file", in_fname, "\n")
                 continue
@@ -80,6 +80,7 @@ def run_phys_seg(mri_fnames, output_fnames, sequence='MPRAGE', physics_params=No
                 physics_params = eval(physics_params)
                 # Convert TR to pTD
                 physics_params[1] = physics_params[1] - physics_params[0]
+                print(physics_params)
                 processed_physics = physics_preprocessing(np.array(physics_params), sequence)
             else:
                 processed_physics = None
@@ -94,6 +95,6 @@ def run_phys_seg(mri_fnames, output_fnames, sequence='MPRAGE', physics_params=No
                                    main_device=device)
 
             print("exporting segmentation...")
-            save_segmentation_nifti(seg, data_dict, out_fname)
+            save_segmentation_nifti(seg, aff, out_fname)
 
-            apply_phys_seg(in_fname, out_fname)
+            # apply_phys_seg(in_fname, out_fname)
