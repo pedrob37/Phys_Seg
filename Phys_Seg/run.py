@@ -20,7 +20,7 @@ def apply_phys_seg(img, out_fname):
 
 def run_phys_seg(mri_fnames, output_fnames, sequence='MPRAGE', physics_params=None,
                  # config_file=os.path.join(Phys_Seg.__path__[0], "config.py"),
-                 device=0, overwrite=True):
+                 device=None, overwrite=True):
     """
 
     :param mri_fnames: str or list/tuple of str
@@ -50,7 +50,9 @@ def run_phys_seg(mri_fnames, output_fnames, sequence='MPRAGE', physics_params=No
     else:
         net.cuda(device)
 
-    net = torch.nn.DataParallel(net)
+    net = torch.nn.DataParallel(net, device_ids=[device, int(1-device)])
+    net.to(f'cuda:{net.device_ids[0]}')
+    # net = torch.nn.DataParallel(net)
 
     if not isinstance(mri_fnames, (list, tuple)):
         mri_fnames = [mri_fnames]
@@ -90,9 +92,6 @@ def run_phys_seg(mri_fnames, output_fnames, sequence='MPRAGE', physics_params=No
                                    patient_data=data,
                                    processed_physics=processed_physics,
                                    main_device=device)
-
-            # if postprocess:
-            #     seg = postprocess_prediction(seg)
 
             print("exporting segmentation...")
             save_segmentation_nifti(seg, data_dict, out_fname)

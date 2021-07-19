@@ -124,7 +124,6 @@ class nnUNet(nn.Module):
         if self.physics_flag:
             physics_block = self.phys(physics)
         # Encode
-        print(f'x1 shape is {x.shape}')
         encode_block1 = self.conv_encode1(x)
         encode_pool1 = self.conv_maxpool1(encode_block1)
 
