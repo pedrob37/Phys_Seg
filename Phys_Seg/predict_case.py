@@ -41,6 +41,7 @@ def image_preprocessing(patient_data):
 
 
 def physics_preprocessing(physics_input, experiment_type):
+    physics_input = physics_input[None, :]
     if experiment_type == 'MPRAGE':
         TI_physics = physics_input[:, 0]
         # print(physics_input.shape)
