@@ -17,7 +17,8 @@ if __name__ == "__main__":
                                                ' will be created', required=False, type=str)
     parser.add_argument('--sequence', type=str, default='MPRAGE', help='',
                         required=True)
-    parser.add_argument('--physics_params', type=str, default=None, help='',
+    parser.add_argument('--physics_params', type=str, default=None, help='Physics parameters.'
+                                                                         'For MPRAGE, specify with square brackets [TI, TR]',
                         required=False)
     parser.add_argument('--device', default='0', type=str, help='used to set on which device the prediction will run. '
                                                                 'Must be either int or str. Use int for GPU id or '
@@ -38,7 +39,10 @@ if __name__ == "__main__":
                                           os.path.basename(input_file_or_dir).split(".")[0] + "_phys_seg")
 
     sequence = args.sequence
+    print(sequence)
     physics_params = args.physics_params
+    if physics_params is not None:
+        assert type(eval(physics_params)) == list, 'Physics parameters should be specified between square brackets!'
     device = args.device
     overwrite_existing = args.overwrite_existing
 

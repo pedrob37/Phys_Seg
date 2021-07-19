@@ -34,6 +34,9 @@ import numpy as np
 #         res[0:0+int(shape[0]), 0:0+int(shape[1]), 0:0+int(shape[2])] = image
 #     return res
 def image_preprocessing(patient_data):
+    if len(patient_data.shape) < 5:
+        shape_mismatch = 5 - len(patient_data.shape)
+        patient_data = patient_data[(*([None] * shape_mismatch), ...)]
     return (patient_data - np.mean(patient_data)) / np.std(patient_data)
 
 
