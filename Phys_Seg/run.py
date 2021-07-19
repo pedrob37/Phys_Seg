@@ -41,7 +41,7 @@ def run_phys_seg(mri_fnames, output_fnames, sequence='MPRAGE', physics_params=No
     maybe_download_parameters(sequence=sequence, physics_flag=True if physics_params else False)
     params_file = get_params_fname(sequence=sequence, physics_flag=True if physics_params else False)
 
-    net = nnUNet(4, 4, physics_flag=True if physics_params else False,
+    net = nnUNet(1, 4, physics_flag=True if physics_params else False,
                  physics_input=physics_input_size[sequence],
                  physics_output=40)
 
