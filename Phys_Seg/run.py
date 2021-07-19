@@ -75,7 +75,10 @@ def run_phys_seg(mri_fnames, output_fnames, sequence='MPRAGE', physics_params=No
 
             # Process data
             if physics_params is not None:
-                processed_physics = physics_preprocessing(physics_params, sequence)
+                physics_params = eval(physics_params)
+                # Convert TR to pTD
+                physics_params[1] = physics_params[1] - physics_params[0]
+                processed_physics = physics_preprocessing(np.array(physics_params), sequence)
             else:
                 processed_physics = None
             data = image_preprocessing(patient_data=data)
