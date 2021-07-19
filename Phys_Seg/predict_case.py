@@ -67,7 +67,7 @@ def predict_phys_seg(net, patient_data, processed_physics, main_device=0):
             pass
         else:
             # tensor = torch.from_numpy(array)
-            patient_data = torch.from_numpy(patient_data).cuda(main_device)
+            patient_data = torch.from_numpy(patient_data).float().cuda(main_device)
         # Basic to begin with: Just run with net!
         if processed_physics is not None:
             out, _ = net(patient_data, processed_physics.cuda(main_device))
