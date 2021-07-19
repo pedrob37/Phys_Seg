@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-
+from monai.inferers import sliding_window_inference
 
 # def pad_patient_3D(patient, shape_must_be_divisible_by=16, min_size=None):
 #     if not (isinstance(shape_must_be_divisible_by, list) or isinstance(shape_must_be_divisible_by, tuple)):
@@ -70,8 +70,9 @@ def predict_phys_seg(net, patient_data, processed_physics, main_device=0):
             patient_data = torch.from_numpy(patient_data).float().cuda(main_device)
         # Basic to begin with: Just run with net!
         if processed_physics is not None:
-            out, _ = net(patient_data, processed_physics.cuda(main_device))
+            out = sliding_window_inference(
+                (patient_data, processed_physics.cuda(main_device)), 160, 1, net, overlap=0.5, mode='gaussian')
         else:
-            out, _ = net(patient_data)
+            out = sliding_window_inference(patient_data, 160, 1, net, overlap=0.5, mode='gaussian')
         pred_seg = torch.softmax(out, dim=1)
     return pred_seg
